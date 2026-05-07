@@ -54,7 +54,7 @@ deploymentTarget = "autoscale"
 run = [
   "bash",
   "-c",
-  "cd backend && gunicorn --bind=0.0.0.0:5000 --reuse-port config.wsgi:application",
+  "cd backend && gunicorn --bind=0.0.0.0:5000 --reuse-port eld_planner.wsgi:application",
 ]
 build = [
   "bash",
