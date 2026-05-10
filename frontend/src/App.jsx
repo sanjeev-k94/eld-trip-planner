@@ -58,7 +58,9 @@ function App() {
       if (res.ok) {
         const data = await res.json()
 
-        const schedule = buildScheduleFromLogs(data.log_entries)
+        const schedule = buildScheduleFromLogs(
+          data.log_entries
+        )
 
         setResult({
           trip: data,
@@ -68,7 +70,8 @@ function App() {
             to_pickup_miles: 0,
             to_dropoff_miles: 0,
             total_days: schedule.length,
-            current_cycle_hours: data.current_cycle_hours,
+            current_cycle_hours:
+              data.current_cycle_hours,
           },
           stops: [],
         })
@@ -98,26 +101,35 @@ function App() {
       })
 
       if (e.status === 'D')
-        byDay[e.day].driving_hours += e.duration
+        byDay[e.day].driving_hours +=
+          e.duration
 
-      if (e.status === 'D' || e.status === 'ON')
-        byDay[e.day].on_duty_hours += e.duration
+      if (
+        e.status === 'D' ||
+        e.status === 'ON'
+      )
+        byDay[e.day].on_duty_hours +=
+          e.duration
     })
 
-    return Object.values(byDay).sort((a, b) => a.day - b.day)
+    return Object.values(byDay).sort(
+      (a, b) => a.day - b.day
+    )
   }
 
   return (
     <div className="app">
       <header className="header">
-        <span className="header-icon">🚛</span>
+        <span className="header-icon">
+          🚛
+        </span>
 
         <div>
           <h1>ELD Trip Planner</h1>
 
           <p>
-            FMCSA HOS Compliant • Route Mapping • Driver Log
-            Generation
+            FMCSA HOS Compliant • Route
+            Mapping • Driver Log Generation
           </p>
         </div>
       </header>
@@ -144,13 +156,18 @@ function App() {
         <main className="content">
           {!result && !loading && (
             <div className="empty">
-              <span className="empty-icon">🗺️</span>
+              <span className="empty-icon">
+                🗺️
+              </span>
 
-              <h3>Plan Your First Trip</h3>
+              <h3>
+                Plan Your First Trip
+              </h3>
 
               <p>
-                Enter your locations and current cycle
-                hours to generate an HOS-compliant
+                Enter your locations and
+                current cycle hours to
+                generate an HOS-compliant
                 schedule and driver log.
               </p>
             </div>
@@ -189,19 +206,66 @@ function App() {
                   lineHeight: 1.6,
                 }}
               >
-                Calculating HOS schedule, ETA timings,
-                route mapping, and generating driver logs
+                Calculating HOS schedule,
+                ETA timings, route mapping,
+                and generating driver logs
                 for your trip.
               </p>
 
               <div
                 style={{
-                  marginTop: 20,
-                  fontSize: 14,
-                  color: '#999',
+                  width: '80%',
+                  maxWidth: 500,
+                  height: 12,
+                  background: '#e5e7eb',
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                  marginTop: 24,
                 }}
               >
-                Please wait while we optimize your route...
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    background:
+                      'linear-gradient(90deg, #2563eb, #7c3aed)',
+                    animation:
+                      'loadingBar 2s infinite',
+                  }}
+                />
+              </div>
+
+              <div
+                style={{
+                  marginTop: 24,
+                  color: '#666',
+                  lineHeight: 2,
+                }}
+              >
+                <div>
+                  🛰️ Mapping intelligent
+                  route...
+                </div>
+
+                <div>
+                  📋 Generating FMCSA
+                  compliant logs...
+                </div>
+
+                <div>
+                  ⏱️ Calculating real-time
+                  ETA...
+                </div>
+
+                <div>
+                  🚛 Optimizing driver
+                  schedule...
+                </div>
+
+                <div>
+                  ⚡ Finalizing trip
+                  analytics...
+                </div>
               </div>
             </div>
           )}
@@ -213,12 +277,16 @@ function App() {
                 trip={result.trip}
               />
 
-              <RouteMap stops={result.stops} />
+              <RouteMap
+                stops={result.stops}
+              />
 
               <LogSheet
                 schedule={result.schedule}
                 selectedDay={selectedDay}
-                onSelectDay={setSelectedDay}
+                onSelectDay={
+                  setSelectedDay
+                }
               />
             </>
           )}
