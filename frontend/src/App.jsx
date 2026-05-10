@@ -5,6 +5,7 @@ import RouteMap from './components/RouteMap'
 import LogSheet from './components/LogSheet'
 import TripSummary from './components/TripSummary'
 import TripHistory from './components/TripHistory'
+import FuelStops from './components/FuelStops'
 
 function App() {
   const [result, setResult] = useState(null)
@@ -280,7 +281,7 @@ function App() {
               <RouteMap
                 stops={result.stops}
               />
-
+              <FuelStops fuelStops={result.fuel_stops} />
               <LogSheet
                 schedule={result.schedule}
                 selectedDay={selectedDay}
