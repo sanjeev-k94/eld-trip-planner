@@ -20,20 +20,27 @@ function App() {
     } catch (e) {}
   }
 
-  useEffect(() => { fetchTrips() }, [])
+  useEffect(() => {
+    fetchTrips()
+  }, [])
 
   const handlePlan = async (formData) => {
     setLoading(true)
     setError(null)
     setResult(null)
+
     try {
       const res = await fetch('/api/trips/plan/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
+
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Failed to plan trip')
+
+      if (!res.ok)
+        throw new Error(data.error || 'Failed to plan trip')
+
       setResult(data)
       setSelectedDay(1)
       fetchTrips()
@@ -47,9 +54,12 @@ function App() {
   const handleSelectTrip = async (trip) => {
     try {
       const res = await fetch(`/api/trips/${trip.id}/`)
+
       if (res.ok) {
         const data = await res.json()
+
         const schedule = buildScheduleFromLogs(data.log_entries)
+
         setResult({
           trip: data,
           schedule,
@@ -62,6 +72,7 @@ function App() {
           },
           stops: [],
         })
+
         setSelectedDay(1)
       }
     } catch (e) {}
@@ -69,12 +80,30 @@ function App() {
 
   const buildScheduleFromLogs = (entries) => {
     const byDay = {}
-    entries.forEach(e => {
-      if (!byDay[e.day]) byDay[e.day] = { day: e.day, entries: [], driving_hours: 0, on_duty_hours: 0 }
-      byDay[e.day].entries.push({ status: e.status, duration: e.duration, remarks: e.remarks })
-      if (e.status === 'D') byDay[e.day].driving_hours += e.duration
-      if (e.status === 'D' || e.status === 'ON') byDay[e.day].on_duty_hours += e.duration
+
+    entries.forEach((e) => {
+      if (!byDay[e.day]) {
+        byDay[e.day] = {
+          day: e.day,
+          entries: [],
+          driving_hours: 0,
+          on_duty_hours: 0,
+        }
+      }
+
+      byDay[e.day].entries.push({
+        status: e.status,
+        duration: e.duration,
+        remarks: e.remarks,
+      })
+
+      if (e.status === 'D')
+        byDay[e.day].driving_hours += e.duration
+
+      if (e.status === 'D' || e.status === 'ON')
+        byDay[e.day].on_duty_hours += e.duration
     })
+
     return Object.values(byDay).sort((a, b) => a.day - b.day)
   }
 
@@ -82,35 +111,110 @@ function App() {
     <div className="app">
       <header className="header">
         <span className="header-icon">🚛</span>
+
         <div>
           <h1>ELD Trip Planner</h1>
-          <p>FMCSA HOS Compliant • Route Mapping • Driver Log Generation</p>
+
+          <p>
+            FMCSA HOS Compliant • Route Mapping • Driver Log
+            Generation
+          </p>
         </div>
       </header>
+
       <div className="main">
         <aside className="sidebar">
-          <TripForm onSubmit={handlePlan} loading={loading} />
-          {error && <div className="error-box">⚠ {error}</div>}
-          <TripHistory trips={trips} onSelect={handleSelectTrip} />
+          <TripForm
+            onSubmit={handlePlan}
+            loading={loading}
+          />
+
+          {error && (
+            <div className="error-box">
+              ⚠ {error}
+            </div>
+          )}
+
+          <TripHistory
+            trips={trips}
+            onSelect={handleSelectTrip}
+          />
         </aside>
+
         <main className="content">
           {!result && !loading && (
             <div className="empty">
               <span className="empty-icon">🗺️</span>
+
               <h3>Plan Your First Trip</h3>
-              <p>Enter your locations and current cycle hours to generate an HOS-compliant schedule and driver log.</p>
+
+              <p>
+                Enter your locations and current cycle
+                hours to generate an HOS-compliant
+                schedule and driver log.
+              </p>
             </div>
           )}
+
           {loading && (
-            <div className="loading">
+            <div
+              className="loading"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '60px 20px',
+                textAlign: 'center',
+              }}
+            >
               <div className="spinner" />
-              Calculating HOS schedule...
+
+              <h2
+                style={{
+                  marginTop: 20,
+                  fontSize: 28,
+                  color: '#2563eb',
+                }}
+              >
+                🚛 Planning Your Trip...
+              </h2>
+
+              <p
+                style={{
+                  marginTop: 10,
+                  fontSize: 16,
+                  color: '#666',
+                  maxWidth: 500,
+                  lineHeight: 1.6,
+                }}
+              >
+                Calculating HOS schedule, ETA timings,
+                route mapping, and generating driver logs
+                for your trip.
+              </p>
+
+              <div
+                style={{
+                  marginTop: 20,
+                  fontSize: 14,
+                  color: '#999',
+                }}
+              >
+                Please wait while we optimize your route...
+              </div>
             </div>
           )}
+
           {result && (
             <>
-              <TripSummary summary={result.summary} trip={result.trip} />
+              <TripSummary
+                summary={result.summary}
+                trip={result.trip}
+              />
+
               <RouteMap stops={result.stops} />
+
               <LogSheet
                 schedule={result.schedule}
                 selectedDay={selectedDay}
