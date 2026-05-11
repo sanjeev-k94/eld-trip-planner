@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import './App.css'
 import TripForm from './components/TripForm'
 import RouteMap from './components/RouteMap'
@@ -119,181 +120,184 @@ function App() {
   }
 
   return (
-    <div className="app">
-      <header className="header">
-        <span className="header-icon">
-          🚛
-        </span>
+    <>
+      <div className="app">
+        <header className="header">
+          <span className="header-icon">
+            🚛
+          </span>
 
-        <div>
-          <h1>ELD Trip Planner</h1>
+          <div>
+            <h1>ELD Trip Planner</h1>
 
-          <p>
-            FMCSA HOS Compliant • Route
-            Mapping • Driver Log Generation
-          </p>
-        </div>
-      </header>
+            <p>
+              FMCSA HOS Compliant • Route
+              Mapping • Driver Log Generation
+            </p>
+          </div>
+        </header>
 
-      <div className="main">
-        <aside className="sidebar">
-          <TripForm
-            onSubmit={handlePlan}
-            loading={loading}
-          />
+        <div className="main">
+          <aside className="sidebar">
+            <TripForm
+              onSubmit={handlePlan}
+              loading={loading}
+            />
 
-          {error && (
-            <div className="error-box">
-              ⚠ {error}
-            </div>
-          )}
+            {error && (
+              <div className="error-box">
+                ⚠ {error}
+              </div>
+            )}
 
-          <TripHistory
-            trips={trips}
-            onSelect={handleSelectTrip}
-          />
-        </aside>
+            <TripHistory
+              trips={trips}
+              onSelect={handleSelectTrip}
+            />
+          </aside>
 
-        <main className="content">
-          {!result && !loading && (
-            <div className="empty">
-              <span className="empty-icon">
-                🗺️
-              </span>
+          <main className="content">
+            {!result && !loading && (
+              <div className="empty">
+                <span className="empty-icon">
+                  🗺️
+                </span>
 
-              <h3>
-                Plan Your First Trip
-              </h3>
+                <h3>
+                  Plan Your First Trip
+                </h3>
 
-              <p>
-                Enter your locations and
-                current cycle hours to
-                generate an HOS-compliant
-                schedule and driver log.
-              </p>
-            </div>
-          )}
+                <p>
+                  Enter your locations and
+                  current cycle hours to
+                  generate an HOS-compliant
+                  schedule and driver log.
+                </p>
+              </div>
+            )}
 
-          {loading && (
-            <div
-              className="loading"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '60px 20px',
-                textAlign: 'center',
-              }}
-            >
-              <div className="spinner" />
-
-              <h2
-                style={{
-                  marginTop: 20,
-                  fontSize: 28,
-                  color: '#2563eb',
-                }}
-              >
-                🚛 Planning Your Trip...
-              </h2>
-
-              <p
-                style={{
-                  marginTop: 10,
-                  fontSize: 16,
-                  color: '#666',
-                  maxWidth: 500,
-                  lineHeight: 1.6,
-                }}
-              >
-                Calculating HOS schedule,
-                ETA timings, route mapping,
-                and generating driver logs
-                for your trip.
-              </p>
-
+            {loading && (
               <div
+                className="loading"
                 style={{
-                  width: '80%',
-                  maxWidth: 500,
-                  height: 12,
-                  background: '#e5e7eb',
-                  borderRadius: 999,
-                  overflow: 'hidden',
-                  marginTop: 24,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '60px 20px',
+                  textAlign: 'center',
                 }}
               >
+                <div className="spinner" />
+
+                <h2
+                  style={{
+                    marginTop: 20,
+                    fontSize: 28,
+                    color: '#2563eb',
+                  }}
+                >
+                  🚛 Planning Your Trip...
+                </h2>
+
+                <p
+                  style={{
+                    marginTop: 10,
+                    fontSize: 16,
+                    color: '#666',
+                    maxWidth: 500,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Calculating HOS schedule,
+                  ETA timings, route mapping,
+                  and generating driver logs
+                  for your trip.
+                </p>
+
                 <div
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    background:
-                      'linear-gradient(90deg, #2563eb, #7c3aed)',
-                    animation:
-                      'loadingBar 2s infinite',
+                    width: '80%',
+                    maxWidth: 500,
+                    height: 12,
+                    background: '#e5e7eb',
+                    borderRadius: 999,
+                    overflow: 'hidden',
+                    marginTop: 24,
                   }}
+                >
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      background:
+                        'linear-gradient(90deg, #2563eb, #7c3aed)',
+                      animation:
+                        'loadingBar 2s infinite',
+                    }}
+                  />
+                </div>
+
+                <div
+                  style={{
+                    marginTop: 24,
+                    color: '#666',
+                    lineHeight: 2,
+                  }}
+                >
+                  <div>
+                    🛰️ Mapping intelligent
+                    route...
+                  </div>
+
+                  <div>
+                    📋 Generating FMCSA
+                    compliant logs...
+                  </div>
+
+                  <div>
+                    ⏱️ Calculating real-time
+                    ETA...
+                  </div>
+
+                  <div>
+                    🚛 Optimizing driver
+                    schedule...
+                  </div>
+
+                  <div>
+                    ⚡ Finalizing trip
+                    analytics...
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {result && (
+              <>
+                <TripSummary
+                  summary={result.summary}
+                  trip={result.trip}
                 />
-              </div>
 
-              <div
-                style={{
-                  marginTop: 24,
-                  color: '#666',
-                  lineHeight: 2,
-                }}
-              >
-                <div>
-                  🛰️ Mapping intelligent
-                  route...
-                </div>
-
-                <div>
-                  📋 Generating FMCSA
-                  compliant logs...
-                </div>
-
-                <div>
-                  ⏱️ Calculating real-time
-                  ETA...
-                </div>
-
-                <div>
-                  🚛 Optimizing driver
-                  schedule...
-                </div>
-
-                <div>
-                  ⚡ Finalizing trip
-                  analytics...
-                </div>
-              </div>
-            </div>
-          )}
-
-          {result && (
-            <>
-              <TripSummary
-                summary={result.summary}
-                trip={result.trip}
-              />
-
-              <RouteMap
-                stops={result.stops}
-              />
-              <FuelStops fuelStops={result.fuel_stops} />
-              <LogSheet
-                schedule={result.schedule}
-                selectedDay={selectedDay}
-                onSelectDay={
-                  setSelectedDay
-                }
-              />
-            </>
-          )}
-        </main>
+                <RouteMap
+                  stops={result.stops}
+                />
+                <FuelStops fuelStops={result.fuel_stops} />
+                <LogSheet
+                  schedule={result.schedule}
+                  selectedDay={selectedDay}
+                  onSelectDay={
+                    setSelectedDay
+                  }
+                />
+              </>
+            )}
+          </main>
+        </div>
       </div>
-    </div>
+      <Analytics />
+    </>
   )
 }
 
